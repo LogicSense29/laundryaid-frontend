@@ -3,10 +3,10 @@ import PickUpInput from "./PickUpInput";
 
 function Header() {
   return (
-    <div className="min-h-screen flex flex-col sm:flex-row justify-between items-center px-6 sm:px-10 md:px-16 font-poppins bg-gradient-to-b sm:bg-gradient-to-r from-[#CFE3D6] via-[#a7cdb7] to-[#7cbf9e]">
+    <div className="min-h-screen flex flex-col sm:flex-row justify-end items-center px-6 sm:px-10 md:px-16 font-poppins bg-gradient-to-b sm:bg-gradient-to-r from-[#CFE3D6] via-[#a7cdb7] to-[#7cbf9e]">
       {/* Left Side */}
-      <div className="md:w-1/2 flex flex-col gap-4 sm:gap-6 pt-6 sm:pt-3">
-        <h1 className="font-bold text-4xl sm:text-5xl md:text-6xl text-center sm:text-left leading-tight">
+      <div className="md:w-1/2 flex flex-col gap-4 sm:gap-6  sm:pt-3">
+        <h1 className="font-bold text-4xl sm:text-5xl md:text-6xl text-center sm:text-left ">
           Less Time on Laundry, <br className="hidden sm:block" />
           More Time for What Matters
         </h1>

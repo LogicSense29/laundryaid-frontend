@@ -6,7 +6,7 @@ function BookNowButton() {
   const navigate = useNavigate();
 
   function handleBookNow() {
-    navigate("/request");
+    navigate("/login");
   }
 
   return (
