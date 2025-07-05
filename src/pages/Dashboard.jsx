@@ -4,7 +4,7 @@ import RequestForm from "@/components/RequestForm";
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("home");
+  const [activeTab, setActiveTab] = useState("book");
 
   const bookings = [
     {
