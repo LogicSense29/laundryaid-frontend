@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
+import { Toaster } from "react-hot-toast";
 import Home from "./pages/Home";
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
@@ -13,19 +13,25 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* Main website layout */}
-        <Route path="/" element={<MainLayout />}>
+        <Route path='/' element={<MainLayout />}>
           <Route index element={<Home />} />
-          <Route path="contact" element={<Contact />} />
-          <Route path="auth" element={<Auth />} />
-          <Route path="*" element={<NoPage />} />
+          <Route path='contact' element={<Contact />} />
+          <Route path='auth' element={<Auth />} />
+          <Route path='*' element={<NoPage />} />
         </Route>
 
         {/* Clean dashboard layout (no navbar/footer/gradient) */}
         <Route element={<DashboardLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path='/dashboard' element={<Dashboard />} />
+          <Route path='/admin' element={<AdminDashboard />} />
         </Route>
       </Routes>
+      <Toaster
+        position='top-right'
+        toastOptions={{
+          duration: 6000, // All toasts stay for 6 seconds
+        }}
+      />
     </BrowserRouter>
   );
 }
