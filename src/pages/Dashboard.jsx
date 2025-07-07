@@ -75,18 +75,18 @@ export default function Dashboard() {
   });
 
   return (
-    <div className='max-w-2xl mx-auto pt-20 p-4 font-poppins'>
+    <div className='max-w-2xl mx-auto pb-15 p-2 font-poppins'>
       {/* Tab Switcher */}
       <div className='mb-6 flex justify-between bg-gray-100 rounded-full overflow-hidden text-sm'>
-        <button
+        {/* <button
           className={`w-1/2 py-2 ${
             activeTab === "home" ? "bg-[#c85f0b] text-white" : "text-gray-600"
           }`}
           onClick={() => setActiveTab("home")}>
           Dashboard
-        </button>
+        </button> */}
         <button
-          className={`w-1/2 py-2 ${
+          className={`w-full py-2 ${
             activeTab === "book" ? "bg-[#127733] text-white" : "text-gray-600"
           }`}
           onClick={() => setActiveTab("book")}>
@@ -190,6 +190,7 @@ export default function Dashboard() {
 
       {/* --- Book Laundry Tab --- */}
       {activeTab === "book" && <RequestForm />}
+
     </div>
   );
 }

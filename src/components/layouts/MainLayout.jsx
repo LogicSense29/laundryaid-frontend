@@ -46,7 +46,7 @@ function MainLayout() {
       )}
 
       <Footer />
-      {scrolled && <DiscountButton />}
+      {/* {scrolled && <DiscountButton />} */}
     </div>
   );
 }

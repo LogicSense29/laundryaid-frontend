@@ -24,7 +24,7 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <div className="bg-gray-100 py-10 px-4 md:px-20 font-poppins">
+    <div className="bg-gray-100 py-20 px-4 md:px-20 font-poppins">
       <h2 className="text-2xl font-bold text-center mb-8 text-[#fb8c3b]">
         What Our Customers Say
       </h2>
@@ -45,3 +45,5 @@ export default function Testimonials() {
     </div>
   );
 }
+
+// text-[#fb8c3b]

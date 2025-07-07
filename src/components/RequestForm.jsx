@@ -94,12 +94,11 @@ export default function RequestForm() {
         console.log(result)
         setStep(1);
       } else {
-        // alert("❌ Booking failed: " + res.text);
         toast.success("❌ Booking failed", { error: res.text });
         console.log(res)
       }
     } catch (err) {
-      // alert("Error submitting booking: " + err.message);
+      toast.success("❌ Booking failed", { error: err });
       console.log(err);
     }
   }

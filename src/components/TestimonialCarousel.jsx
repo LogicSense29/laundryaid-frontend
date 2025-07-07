@@ -34,8 +34,8 @@ const testimonials = [
 
 export default function TestimonialCarousel() {
   return (
-    <section className="bg-green-50 px-6 sm:px-10 md:px-20 py-12 font-poppins">
-      <h2 className="text-2xl sm:text-3xl font-bold text-center mb-10 text-[#fb8c3b]">
+    <section className='bg-green-50 px-6 sm:px-10 md:px-10 lg:px-16 py-12 md:py-15 lg:py-20 font-poppins'>
+      <h2 className='text-2xl sm:text-3xl font-bold text-center mb-10 text-primary'>
         What Our Customers Say
       </h2>
 
@@ -49,20 +49,19 @@ export default function TestimonialCarousel() {
           768: { slidesPerView: 2 },
           1024: { slidesPerView: 3 },
         }}
-        modules={[Pagination, Autoplay]}
-      >
+        modules={[Pagination, Autoplay]}>
         {testimonials.map((testimonial, index) => (
           <SwiperSlide key={index}>
-            <div className="bg-white h-full rounded-xl shadow-lg p-6 sm:p-8 flex flex-col justify-between">
-              <Quote className="text-[#127733] mb-2" />
-              <p className="text-gray-700 italic mb-6 leading-relaxed">
+            <div className='bg-white h-full rounded-xl shadow-lg p-6 sm:p-8 flex flex-col justify-between'>
+              <Quote className='text-[#fb8c3b] mb-2' />
+              <p className='text-gray-700 italic mb-6 leading-relaxed'>
                 {testimonial.message}
               </p>
-              <div className="mt-auto">
-                <p className="font-semibold text-[#03170a]">
+              <div className='mt-auto'>
+                <p className='font-semibold text-[#03170a]'>
                   {testimonial.name}
                 </p>
-                <p className="text-sm text-gray-500">
+                <p className='text-sm text-gray-500'>
                   {testimonial.packageUsed} Package
                 </p>
               </div>
