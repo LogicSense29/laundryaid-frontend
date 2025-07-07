@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 
 function Discount() {
   return (
-    <section className='bg-white px-6 md:px-10 lg:px-16 py-12 md:py-15 lg:py-20 font-poppins'>
-      <div className='relative flex flex-col justify-center items-center text-center bg-[url("/videos/hero1.gif")] bg-cover bg-center h-80 md:h-[24rem] rounded-xl overflow-hidden px-4 sm:px-10 py-8 gap-4'>
+    <section className='bg-white px-6 md:px-10 lg:px-16 py-10 md:pb-15 lg:py-20 font-poppins'>
+      <div
+        data-aos='fade-up'
+        className='relative flex flex-col justify-center items-center text-center bg-[url("/videos/hero1.gif")] bg-cover bg-center h-80 md:h-[24rem] rounded-xl overflow-hidden px-4 sm:px-10 py-8 gap-4'>
         {/* Overlay */}
         <div className='absolute inset-0 bg-black/50 z-10 rounded-xl' />
 

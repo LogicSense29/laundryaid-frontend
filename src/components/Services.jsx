@@ -23,7 +23,7 @@ const services = [
 
 function Services() {
   return (
-    <section className='bg-white py-12 md:py-15 lg:py-20 px-6 sm:px-10 md:px-10 lg:px-16 font-poppins'>
+    <section className='lg:h-screen bg-white py-12 md:py-15 lg:py-20 px-6 sm:px-10 md:px-10 lg:px-16 font-poppins'>
       <h2 className='text-3xl font-bold text-[#127733] text-center mb-10'>
         Our Services
       </h2>
@@ -32,6 +32,7 @@ function Services() {
         {services.map((item, index) => (
           <div
             key={index}
+            data-aos='fade-up'
             className='flex-1 bg-white rounded-xl shadow-sm border hover:shadow-md transition p-4'>
             <div
               className='w-full aspect-square bg-center bg-no-repeat bg-cover rounded-md mb-4'

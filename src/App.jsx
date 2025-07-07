@@ -9,7 +9,25 @@ import DashboardLayout from "./components/layouts/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import ScrollToTop from "./components/ScrollToTop";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { useEffect } from "react";
+
 function App() {
+  useEffect(() => {
+    AOS.init(
+      {
+        delay: 300
+      }
+    );
+  }, []);
+
+  useEffect(() => {
+    fetch("https://laundryaid-backend.onrender.com/api/track-visit", {
+      method: "POST",
+    });
+  }, []);
+  
   return (
     <>
       <BrowserRouter>

@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-hot-toast";
+import BookingFailed from "./BookingFailed";
+import { LoaderComponent } from "./Loading";
 // import { PaystackButton } from "react-paystack";
 
 // Validation Schemas
@@ -32,6 +34,8 @@ const packagePricing = {
 
 export default function RequestForm() {
   const [step, setStep] = useState(1);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -55,8 +59,7 @@ export default function RequestForm() {
   const next = async (type) => {
     const valid = await trigger();
     if (valid) setStep((s) => s + 1);
-    type == 'submit' && handleSubmit(onSubmit)();
-    console.log('next', step)
+    type == "submit" && handleSubmit(onSubmit)();
   };
 
   const back = () => setStep((s) => s - 1);
@@ -69,39 +72,46 @@ export default function RequestForm() {
     .split("T")[0];
 
   const onSubmit = async () => {
+    setLoading(true);
+    setError(null);
+
     const values = getValues();
     const finalData = {
       ...values,
       pickupDate,
       deliveryDate,
-      clothes_count: 80
+      clothes_count: 80,
     };
-
-    console.log(finalData)
+    console.log(finalData);
 
     try {
-      const res = await fetch("http://localhost:8999/api/add_request", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(finalData),
-      });
-
+      const res = await fetch(
+        "https://laundryaid-backend.onrender.com/api/add_request",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(finalData),
+        }
+      );
 
       if (res.ok) {
         // alert("✅ Booking & payment successful!");
         const result = await res.json();
+        setLoading(false)
         toast.success("✅ Booking successful!");
-        console.log(result)
+       console.log("Success:", result);
         setStep(1);
       } else {
         toast.success("❌ Booking failed", { error: res.text });
-        console.log(res)
+        setError(res.status || "Something went wrong.");
+        console.log(res.status);
       }
     } catch (err) {
       toast.success("❌ Booking failed", { error: err });
-      console.log(err);
+      setError(err.message || "Something went wrong.");
+      console.log(err)
     }
-  }
+  };
 
   const onPaymentSuccess = async (ref) => {
     const values = getValues();
@@ -217,7 +227,7 @@ export default function RequestForm() {
               {...register("pickupOption")}
               className='w-full p-3 border rounded-lg'>
               <option value='pickup'>Pickup at Store</option>
-              <option value='delivery'>Home Delivery</option>
+              <option value='delivery'>Self Delivery</option>
             </select>
           </>
         )}
@@ -285,6 +295,9 @@ export default function RequestForm() {
             />
           </div>
         )} */}
+        {loading && !error && <LoaderComponent loading={loading}/>}
+        {/* If Booking Fails */}
+        {error && <BookingFailed message={error}/>}
 
         {/* Navigation Buttons */}
         <div className='flex justify-between mt-4'>
@@ -301,7 +314,7 @@ export default function RequestForm() {
               type='button'
               onClick={() => next(step == 4 && "submit")}
               className='px-5 py-2 rounded-full bg-[#c85f0b] text-white'>
-              {step < 4 ? "Next" : "Submit"}
+              {step < 4 ? "Next" : error ? "Retry" : "Submit"}
             </button>
           )}
         </div>

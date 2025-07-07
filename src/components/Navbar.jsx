@@ -18,7 +18,7 @@ const Navbar = ({ scrolled }) => {
 
   const navLinks = [
     { name: "Home", path: "/", icon: MapPinHouse },
-    { name: "Contact", path: "/contact", icon: UserRoundPen },
+    // { name: "Contact", path: "/contact", icon: UserRoundPen },
     // { name: "Dashboard", path: "/dashboard" }, // Optional: render conditionally if logged in
   ];
 
@@ -42,13 +42,37 @@ const Navbar = ({ scrolled }) => {
             <Link
               key={name}
               to={path}
-              className={`text-base flex flex-row items-center gap-2 font-medium hover:text-[#127733] transition ${
+              className={`text-base flex flex-row items-center gap-2 font-medium hover:text-[#127733] hover:text-primary hover:scale-110 transition-transform duration-300 ${
                 isActive(path) ? "text-[#127733] font-semibold" : ""
               }`}>
               {name}
-              <Icon size={16} />
+              <Icon size={20} />
             </Link>
           ))}
+
+          <div className='flex flex-row text-gray-900 gap-4'>
+            <a
+              href='https://web.facebook.com/people/Laundry-Aid/61550941633625/'
+              target='_blank'
+              className='flex flex-row items-center flex-wrap gap-2 hover:text-primary hover:scale-125 transition-transform duration-300'>
+              {/* <p className='text-base'>Facebook</p> */}
+              <Facebook size={20} />
+            </a>
+            <a
+              href='https://www.instagram.com/laundryaidng'
+              target='_blank'
+              className='flex flex-row items-center flex-wrap gap-2 hover:text-primary hover:scale-125 transition-transform duration-300'>
+              {/* <p className='text-base'>Instagram</p> */}
+              <Instagram size={20} />
+            </a>
+            <a
+              href='https://wa.me/2349048989787?text=Hi%2C%20I%27d%20love%20to%20request%20a%20Pickup'
+              target='_blank'
+              className='flex flex-row items-center flex-wrap gap-2 hover:text-primary hover:scale-125 transition-transform duration-300'>
+              {/* <p className='text-base'>WhatsApp</p> */}
+              <MessageCircle size={20} />
+            </a>
+          </div>
         </div>
 
         {/* Mobile Toggle Button */}

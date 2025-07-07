@@ -35,12 +35,12 @@ function Pricing() {
   ];
 
   return (
-    <section className='bg-white px-6 md:px-10 lg:px-16 py-6 md:py-0 font-poppins'>
+    <section className='lg:h-screen bg-white px-6 md:px-10 lg:px-16 py-6 md:pb-7 lg:py-20 font-poppins'>
       <h2 className='text-3xl font-bold text-[#127733] text-center mb-10'>
         Packages & Pricing
       </h2>
 
-      <div className='flex flex-col md:flex-row gap-6'>
+      <div data-aos='fade-up' className='flex flex-col md:flex-row gap-6'>
         {packages.map((item, index) => (
           <div
             key={index}
