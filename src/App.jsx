@@ -53,7 +53,7 @@ function App() {
         <Toaster
           position='top-right'
           toastOptions={{
-            duration: 6000, // All toasts stay for 6 seconds
+            duration: 8000, // All toasts stay for 6 seconds
           }}
         />
       </BrowserRouter>
