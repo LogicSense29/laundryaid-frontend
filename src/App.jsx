@@ -51,7 +51,7 @@ function App() {
           </Route>
         </Routes>
         <Toaster
-          position='top-right'
+          position='top-center'
           toastOptions={{
             duration: 8000, // All toasts stay for 6 seconds
           }}

@@ -67,7 +67,7 @@ export default function RequestForm() {
   const pickupDate = new Date(Date.now() + 86400000)
     .toISOString()
     .split("T")[0];
-  const deliveryDate = new Date(Date.now() + 5 * 86400000)
+  const deliveryDate = new Date(Date.now() + 4 * 86400000)
     .toISOString()
     .split("T")[0];
 
@@ -97,19 +97,21 @@ export default function RequestForm() {
       if (res.ok) {
         // alert("✅ Booking & payment successful!");
         const result = await res.json();
+        const {name} = result.request;
+        const slicedName = name.split(" ")[0]
         setLoading(false)
         toast.success("✅ Booking successful!", {
           delay: 0, 
         });
-        toast.success("✅ Check your Email 😊", {
+        toast.success(`${slicedName} Check your Email 😊`, {
           delay: 1500, 
         });
-       console.log("Success:", result);
+      //  console.log("Success:", result);
         setStep(1);
       } else {
         toast.error("❌ Booking failed", { error: res.text });
         setError(res.status || "Something went wrong.");
-        console.log(res.status);
+        // console.log(res.status);
       }
     } catch (err) {
       toast.error("❌ Booking failed", { error: err });
