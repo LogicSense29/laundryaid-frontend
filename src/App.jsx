@@ -37,18 +37,18 @@ function App() {
           <Route path='/' element={<MainLayout />}>
             <Route index element={<Home />} />
             <Route path='contact' element={<Contact />} />
-            <Route path='auth' element={<Auth />} />
+            {/* <Route path='auth' element={<Auth />} /> */}
 
             {/* Just for Now */}
-            <Route path='/request' element={<Dashboard />} />
+            <Route path='request' element={<Dashboard />} />
             <Route path='*' element={<NoPage />} />
           </Route>
 
           {/* Clean dashboard layout (no navbar/footer/gradient) */}
-          <Route element={<DashboardLayout />}>
+          {/* <Route element={<DashboardLayout />}>
             <Route path='/dashboard' element={<Dashboard />} />
             <Route path='/admin' element={<AdminDashboard />} />
-          </Route>
+          </Route> */}
         </Routes>
         <Toaster
           position='top-center'
