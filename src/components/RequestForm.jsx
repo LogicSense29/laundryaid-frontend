@@ -5,7 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-hot-toast";
 import BookingFailed from "./BookingFailed";
 import { LoaderComponent } from "./Loading";
-// import { PaystackButton } from "react-paystack";
+import { PaystackButton } from "react-paystack";
+import { LockIcon } from "lucide-react";
 
 // Validation Schemas
 const schemas = [
@@ -16,7 +17,7 @@ const schemas = [
   }),
   z.object({
     serviceType: z.enum(["wash & fold", "deluxe", "premium"]),
-    pickupOption: z.enum(["pickup", "delivery"]),
+    pickupOption: z.enum(["pickup", "dropoff"]),
   }),
   z.object({
     address: z.string().min(5, "Address is too short"),
@@ -115,12 +116,17 @@ export default function RequestForm() {
       }
     } catch (err) {
       toast.error("❌ Booking failed", { error: err });
-      setError(err.message || "Something went wrong.");
-      console.log(err)
+      setError(err.error || "Something went wrong.");
+      console.log(err.error)
     }
   };
 
+  const testURL = "http://localhost:8999/api/add_request";
+  const baseURL = "https://laundryaid-backend.onrender.com/api/add_request";
   const onPaymentSuccess = async (ref) => {
+        setLoading(true);
+        setError(null);
+
     const values = getValues();
     const finalData = {
       ...values,
@@ -131,31 +137,49 @@ export default function RequestForm() {
     };
 
     try {
-      const res = await fetch("/api/add_request", {
+      const response = await fetch(baseURL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(finalData),
       });
 
-      const result = await res.json();
-      if (result.success) {
-        alert("✅ Booking & payment successful!");
+      const data = await response.json();
+      if (response.ok) {
+        const { name } = result.request;
+        const slicedName = name.split(" ")[0];
+        setLoading(false);
+        toast.success("✅ Booking successful!", {
+          delay: 0,
+        });
+        toast.success(`${slicedName} Check your Email 😊`, {
+          delay: 1500,
+        });
         setStep(1);
       } else {
-        alert("❌ Booking failed: " + result.message);
+        //  setLoading(false);
+          toast.error("❌ Booking failed", { error: data.error });
+          setError(response.status || "Something went wrong.");
+          console.log(data.error || data.message);
+          console.log('from error', data.error);
       }
     } catch (err) {
-      alert("Error submitting booking: " + err.message);
+       toast.error("❌ Booking failed", { error: err });
+       setError(err.error || "Something went wrong.");
+       setLoading(false);
+       console.log(err);
     }
   };
+
 
   const paystackProps = {
     email: getValues("email"),
     amount: packagePricing[getValues("serviceType")] * 100,
-    publicKey: "pk_test_adad6377c193642ad173ef1f3653cc0ab7abc89f",
+    publicKey: `${import.meta.env.VITE_PAYSTACK_PUBLIC_KEY}`,
     text: "Pay Now",
     onSuccess: onPaymentSuccess,
-    onClose: () => alert("Payment was not completed"),
+    onClose: () => {
+      toast.error("Payment was closed");
+    },
   };
 
   return (
@@ -233,8 +257,8 @@ export default function RequestForm() {
             <select
               {...register("pickupOption")}
               className='w-full p-3 border rounded-lg'>
-              <option value='pickup'>Pickup at Store</option>
-              <option value='delivery'>Self Delivery</option>
+              <option value='pickup'>Pickup</option>
+              <option value='dropoff'>Dropoff</option>
             </select>
           </>
         )}
@@ -294,17 +318,35 @@ export default function RequestForm() {
           </div>
         )}
 
-        {/* {step === 5 && (
-          <div className="text-center">
+        {step === 5 && (
+          <div className='text-center space-y-8'>
+            <div className='shadow-sm border border-gray-300 p-5 rounded-lg space-y-3 bg-gradient-to-b sm:bg-gradient-to-r from-[#CFE3D6] via-[#a7cdb7] to-[#7cbf9e]'>
+              <p>Amount</p>
+              <p className='text-2xl'>
+                <strong>
+                  ₦{packagePricing[getValues("serviceType")].toLocaleString()}
+                </strong>
+              </p>
+              <div>
+                <span className='flex justify-center items-center text-xs text-gray-500 space-x-1'>
+                  <i className=''>Secured by Paystack</i>
+                  <LockIcon size={14} />
+                </span>
+                <span>
+                  <i>LaundryAid</i>
+                </span>
+              </div>
+            </div>
             <PaystackButton
               {...paystackProps}
-              className="w-full bg-[#c85f0b] text-white p-3 rounded-lg"
+              className='w-full bg-[#c85f0b] text-white p-3 rounded-lg'
             />
           </div>
-        )} */}
-        {loading && !error && <LoaderComponent loading={loading}/>}
+        )}
+
+        {loading && !error && <LoaderComponent loading={loading} />}
         {/* If Booking Fails */}
-        {error && <BookingFailed message={error}/>}
+        {error && <BookingFailed message={error} />}
 
         {/* Navigation Buttons */}
         <div className='flex justify-between mt-4'>
@@ -316,12 +358,12 @@ export default function RequestForm() {
               Back
             </button>
           )}
-          {step <= 4 && (
+          {step < 5 && (
             <button
               type='button'
-              onClick={() => next(step == 4 && "submit")}
+              onClick={() => next(step == 5 && "submit")}
               className='px-5 py-2 rounded-full bg-[#c85f0b] text-white'>
-              {step < 4 ? "Next" : error ? "Retry" : "Submit"}
+              {step < 5 ? "Next" : error && "Retry"}
             </button>
           )}
         </div>
@@ -329,3 +371,7 @@ export default function RequestForm() {
     </div>
   );
 }
+
+//  {
+//    step < 5 ? "Next" : error ? "Retry" : "Submit";
+//  }
