@@ -7,6 +7,22 @@
   box-sizing: border-box;
 } */
 
+
+.react-datepicker-wrapper, .react-datepicker_input-container input {
+  width: 100% !important;
+}
+
+.react-datepicker__day--selected {
+  background-color: #127733 !important;  /* your brand color */
+  color: white;
+}
+
+.react-datepicker__day--keyboard-selected {
+  background-color: #127733;
+  color: white;
+}
+
+
 @custom-variant dark (&:is(.dark *));
 
 @theme{

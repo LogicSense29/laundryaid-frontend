@@ -8,7 +8,13 @@ function Pricing() {
       type: "Wash & Fold",
       description:
         "Perfect for your everyday laundry needs. We wash, remove stains, and fold your clothes neatly, saving you time and effort.",
-      benefits: ["Washing", "Stain Removal", "Fold"],
+      benefits: [
+        "Washing",
+        "Stain Removal",
+        "Fold",
+        "Free pick up & delivery",
+        "72hr clothe return",
+      ],
       amount: "₦6,000",
     },
     {
@@ -22,6 +28,8 @@ function Pricing() {
         "Starching",
         "Clothe Treatment",
         "Dry Cleaning",
+        "Free pick up & delivery",
+        "72hr clothe return",
       ],
       amount: "₦25,000",
     },
@@ -29,13 +37,20 @@ function Pricing() {
       type: "Deluxe",
       description:
         "A great choice for a polished look. Enjoy clean, crisp, and fresh-smelling clothes with washing, ironing, stain removal, and starching all in one package.",
-      benefits: ["Washing", "Stain Removal", "Ironing", "Starching"],
+      benefits: [
+        "Washing",
+        "Stain Removal",
+        "Ironing",
+        "Starching",
+        "Free pick up & delivery",
+        "72hr clothe return",
+      ],
       amount: "₦10,000",
     },
   ];
 
   return (
-    <section className='lg:h-screen bg-white px-6 md:px-10 lg:px-16 py-6 md:pb-7 lg:py-20 font-poppins'>
+    <section className=' px-6 md:px-10 lg:px-16 py-6 md:pb-7 lg:py-20 font-poppins bg-white'>
       <h2 className='text-3xl font-bold text-[#127733] text-center mb-10'>
         Packages & Pricing
       </h2>
@@ -61,8 +76,7 @@ function Pricing() {
             <div className='mt-6 text-2xl font-semibold text-[#127733]'>
               {item.amount}
               <span className='text-sm font-normal text-gray-400'>
-                {" "}
-                /package
+                /month
               </span>
             </div>
 
@@ -71,7 +85,7 @@ function Pricing() {
               {item.benefits.map((benefit, i) => (
                 <li key={i} className='flex items-center gap-2'>
                   <Check size={16} className='text-green-600' />
-                  {benefit}
+                  {i == 0 ? `${benefit} (Up to 80 clothes)` : benefit}
                 </li>
               ))}
             </ul>

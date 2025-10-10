@@ -6,6 +6,7 @@ function Header() {
     <div className='h-auto flex flex-col sm:flex-col md:flex-row justify-between items-center px-6 sm:px-10 md:px-10 lg:px-16 font-poppins bg-gradient-to-b sm:bg-gradient-to-r from-[#CFE3D6] via-[#a7cdb7] to-[#7cbf9e]'>
       {/* Left Side */}
       <div className='md:w-1/2 flex flex-col gap-4 sm:gap-6 md:gap-2 sm:pt-3'>
+      {/* <p className="text-red-700">Free Delivery</p> */}
         <h1 className='font-bold text-4xl sm:text-4xl md:text-4xl lg:text-6xl text-center md:text-left header_text'>
           Less Time on Laundry, More Time for What Matters
         </h1>
