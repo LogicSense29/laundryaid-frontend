@@ -1,12 +1,15 @@
+import { API_BASE_URL } from "@/config";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-hot-toast";
 import BookingFailed from "./BookingFailed";
 import { LoaderComponent } from "./Loading";
 import { PaystackButton } from "react-paystack";
-import { LockIcon } from "lucide-react";
+import { LockIcon, Gift, Copy } from "lucide-react";
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css'
 import { ClipLoader } from "react-spinners";
@@ -19,10 +22,12 @@ const schemas = [
     name: z.string().min(2, "Full name is required"),
     email: z.string().email("Invalid email"),
     contact: z.string().min(11, "Phone number is too short"),
+    referred_by: z.string().optional(),
   }),
   z.object({
-    serviceType: z.enum(["wash & fold", "deluxe", "premium"]),
+    serviceType: z.enum(["basic", "ironing", "premium"]),
     pickupOption: z.enum(["pickup", "dropoff"]),
+    dropOffOption: z.enum(["aanfani", "oluyole"]),
   }),
   z.object({
     address: z.string().min(5, "Address is too short"),
@@ -34,21 +39,30 @@ const schemas = [
 
 // Pricing per package
 const packagePricing = {
-  "wash & fold": 6000,
-  deluxe: 10000,
-  premium: 25000,
+  // "wash & fold": 12000,
+    basic: 12000,
+  ironing: 10000,
+  // basic_80: 10000,
+  // basic_plus: 20000,
+  premium: 35000,
 };
 
-export default function RequestForm() {
+export default function RequestForm({ onTabChange }) {
   const [selected, setSelected] = useState();
   const [minDate, setMinDate] = useState(new Date());
+  const { login, token, authFetch, user } = useAuth();
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [error, setErrors] = useState(null);
   const [loading, setLoading] = useState(false);
   const [voucherLoading, setVoucherLoading] = useState(false);
+  const [showReferralPopup, setShowReferralPopup] = useState(false);
+  const [pendingAuth, setPendingAuth] = useState(null);
 
-  const checkCountRequestTest = "http://localhost:8999/api/count_request";
-   const checkCountRequestBase = "https://laundryaid-backend.onrender.com/api/count_request";
+  // Read referral code from URL ?ref=XXXXX
+  const referredBy = new URLSearchParams(window.location.search).get("ref") || "";
+
+  const checkCountRequestBase = `${API_BASE_URL}/api/count_request`;
 
   useEffect(()=> {
     const checkCount = async () => {
@@ -101,20 +115,49 @@ export default function RequestForm() {
       name: "",
       email: "",
       contact: "",
-      serviceType: "wash & fold",
+      serviceType: "basic",
       pickupOption: "pickup",
+      dropOffOption: "aanfani",
       promo_code: "",
       address: "",
+      referred_by: referredBy,
     },
   });
+
+  // Autofill form if user is logged in and has previous bookings
+  useEffect(() => {
+    const fetchLatestBooking = async () => {
+      if (!token) return;
+      try {
+        const res = await authFetch(`${API_BASE_URL}/api/user/bookings`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.bookings && data.bookings.length > 0) {
+            const latest = data.bookings[0];
+            const currentValues = getValues();
+            if (!currentValues.name && latest.name) setValue("name", latest.name, { shouldValidate: true });
+            if (!currentValues.email && latest.email) setValue("email", latest.email, { shouldValidate: true });
+            if (!currentValues.contact && latest.contact) setValue("contact", latest.contact, { shouldValidate: true });
+            if (!currentValues.address && latest.address) setValue("address", latest.address, { shouldValidate: true });
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch latest booking for autofill", err);
+      }
+    };
+
+    fetchLatestBooking();
+  }, [token, authFetch, setValue, getValues]);
 
  const voucherCode = watch("promo_code");
 
 const [discount, setDiscount] = useState(0);
+const deliveryFee = 2000
 const selectedPackage = watch("serviceType");
+const selectedPickupOption = watch("pickupOption");
 const basePrice = packagePricing[selectedPackage] || 0;
 const finalPrice =
-  selectedPackage == "wash & fold"
+  selectedPackage === "basic" || selectedPackage === "ironing"
     ? basePrice - 0
     : basePrice - discount;
 
@@ -173,11 +216,11 @@ const finalPrice =
 
   // const deliveryDate = delivery.toISOString().split("T")[0];
 
-  const pickupDateStr = new Date(selected);
+  const pickupDateStr = selected ? new Date(selected) : new Date();
   pickupDateStr.setDate(pickupDateStr.getDate());
   const pickupDate = pickupDateStr.toLocaleDateString("en-CA"); // "YYYY-MM-DD"
 
-  const deliveryDateStr = new Date(selected);
+  const deliveryDateStr = selected ? new Date(selected) : new Date();
   deliveryDateStr.setDate(deliveryDateStr.getDate() + 4);
   const deliveryDate = deliveryDateStr.toLocaleDateString("en-CA");
 
@@ -196,7 +239,7 @@ setVoucherLoading(false)
     try {
       setVoucherLoading(true)
       const res = await fetch(
-        "https://laundryaid-backend.onrender.com/api/promo_code",
+        `${API_BASE_URL}/api/promo_code`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -258,13 +301,14 @@ console.log(res.text)
       ...values,
       pickupDate,
       deliveryDate,
-      clothes_count: 80,
+      // clothes_count: values.serviceType === "basic_80" ? 80 : 150,
+       // basic_plus or others
     };
     console.log(finalData);
 
     try {
       const res = await fetch(
-        "https://laundryaid-backend.onrender.com/api/add_request",
+        `${API_BASE_URL}/api/add_request`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -286,8 +330,12 @@ console.log(res.text)
         });
         //  console.log("Success:", result);
         setStep(1);
+        if (result.token) {
+          setPendingAuth({ user: result.user, token: result.token });
+        }
+        setShowReferralPopup(true);
       } else {
-        toast.error("❌ Booking failed", { error: res.text });
+        toast.error("❌ Booking failed", { error: res.body.message });
         setErrors(res.status || "Something went wrong.");
         setLoading(false)
         // console.log(res.status);
@@ -301,8 +349,8 @@ console.log(res.text)
     }
   };
 
-  const testURL = "http://localhost:8999/api/add_request";
-  const baseURL = "https://laundryaid-backend.onrender.com/api/add_request";
+  const testURL = `${API_BASE_URL}/api/add_request`;
+  const baseURL = `${API_BASE_URL}/api/add_request`;
   const onPaymentSuccess = async (ref) => {
     setLoading(true);
     setError(null);
@@ -318,7 +366,7 @@ console.log(res.text)
     };
 
     try {
-      const response = await fetch(baseURL, {
+      const response = await fetch(testURL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -327,6 +375,7 @@ console.log(res.text)
       deliveryDate,
       paymentRef: ref.reference,
       paidAmount: finalPrice,
+      referred_by: values.referred_by || undefined,
       // paidAmount: packagePricing[values.serviceType],
     }),
       });
@@ -343,6 +392,10 @@ console.log(res.text)
           delay: 1500,
         });
         setStep(1);
+        if (data.token) {
+          setPendingAuth({ user: data.user, token: data.token });
+        }
+        setShowReferralPopup(true);
       } else {
         //  setLoading(false);
         toast.error("❌ Booking failed", { error: data.error });
@@ -431,6 +484,14 @@ console.log(res.text)
             {errors.contact && (
               <p className='text-red-500'>{errors.contact.message}</p>
             )}
+
+            {!token && (
+              <input
+                {...register("referred_by")}
+                placeholder='Referral Code (Optional)'
+                className='w-full p-3 border rounded-lg'
+              />
+            )}
           </div>
         )}
 
@@ -445,18 +506,28 @@ console.log(res.text)
                   ? finalPrice.toLocaleString()
                   : "6,000"
               }`}</option> */}
-              <option value='wash & fold' disabled={discount > 0}>
+              {/* <option value='wash & fold' disabled={discount > 0}>
                 Wash & Fold - ₦6,000{" "}
-              </option>
-              <option value='deluxe'>{`Deluxe - ₦${
-                discount > 0 && selectedPackage == "deluxe"
+              </option> */}
+              {/* <option value='wash & fold'>{`Wash & Fold ₦${
+                discount > 0 && selectedPackage == "basic_80"
+                  ? finalPrice.toLocaleString()
+                  : "8,000"
+              }`}</option> */}
+              <option value='basic'>{`Basic (Up to 80 clothes) - ₦${
+                discount > 0 && selectedPackage == "basic"
+                  ? finalPrice.toLocaleString()
+                  : "12,000"
+              }`}</option>
+              <option value='ironing'>{`Ironing (Up 40 clothes) - ₦${
+                discount > 0 && selectedPackage == "ironing"
                   ? finalPrice.toLocaleString()
                   : "10,000"
               }`}</option>
               <option value='premium'>{`Premium - ₦${
                 discount > 0 && selectedPackage == "premium"
                   ? finalPrice.toLocaleString()
-                  : "25,000"
+                  : "35,000"
               }`}</option>
             </select>
 
@@ -464,9 +535,31 @@ console.log(res.text)
             <select
               {...register("pickupOption")}
               className='w-full p-3 border rounded-lg'>
-              <option value='pickup'>Free Pickup</option>
+              <option value='pickup'>
+                {selectedPackage === "basic_80" || selectedPackage === "basic_plus" ? "Pickup" : "Free Pickup"}
+              </option>
               <option value='dropoff'>Dropoff</option>
             </select>
+            {/* {selectedPackage == "basic" && selectedPickupOption == "pickup" && (
+              <span className='text-xs text-primary font-bold'>
+                Delivery fee ₦{deliveryFee.toLocaleString()}{" "}
+              </span>
+            )} */}
+            {
+             selectedPickupOption == "dropoff" && (
+              <>
+                          <label className='block font-medium mt-4'>Dropoff Location</label>
+            <select
+              {...register("dropOffOption")}
+              className='w-full p-3 border rounded-lg'>
+              <option value='aanfani'>
+                Aanfani
+              </option>
+              <option value='oluyole'>Dropoff</option>
+            </select>
+              </>
+             )
+            }
 
             <label className='block font-medium mt-4'>
               Voucher Code(Optional)
@@ -620,6 +713,56 @@ console.log(res.text)
           )}
         </div>
       </form>
+
+      {/* Referral Popup Modal */}
+      {showReferralPopup && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full text-center space-y-4 shadow-xl">
+            <div className="w-16 h-16 bg-[#127733]/10 rounded-full flex items-center justify-center mx-auto">
+              <Gift className="text-[#127733]" size={32} />
+            </div>
+            <h3 className="text-xl font-bold text-[#03170a]">Refer a Friend. Earn for Life.</h3>
+            <p className="text-gray-600 text-sm leading-relaxed">
+              Earn <span className="font-bold text-[#c85f0b]">15% commission</span> every time your referral completes a laundry order with LaundryAid.
+            </p>
+            <div className="flex flex-col gap-3 pt-4">
+              {(() => {
+                const referralCode = pendingAuth?.user?.referralCode || user?.referralCode;
+                const link = referralCode ? `https://laundryaid.com.ng/request?ref=${referralCode}` : "";
+                
+                if (!link) return null;
+
+                return (
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(link);
+                      toast.success("Link copied!");
+                    }}
+                    className="w-full flex items-center justify-between gap-2 bg-[#127733]/10 text-[#127733] border border-[#127733]/20 p-3 rounded-xl font-semibold hover:bg-[#127733]/20 transition-colors"
+                  >
+                    <span className="truncate text-sm">{link}</span>
+                    <Copy size={18} className="flex-shrink-0" />
+                  </button>
+                );
+              })()}
+              <button 
+                onClick={() => {
+                  setShowReferralPopup(false);
+                  if (pendingAuth?.token) {
+                    login(pendingAuth.user, pendingAuth.token);
+                    navigate("/dashboard");
+                  } else {
+                    onTabChange ? onTabChange("home") : navigate("/dashboard");
+                  }
+                }}
+                className="w-full text-gray-500 font-medium"
+              >
+                Maybe Later
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

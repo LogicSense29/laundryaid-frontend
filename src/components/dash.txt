@@ -1,7 +1,6 @@
-import { API_BASE_URL } from "@/config";
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home, Package, Gift, User, PlusCircle, Bell } from "lucide-react";
+import { Home, Package, Gift, User, PlusCircle } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import RequestForm from "@/components/RequestForm";
 import HomeTab from "@/components/dashboard/HomeTab";
@@ -19,9 +18,7 @@ const TABS = [
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("home");
-  const [notifications, setNotifications] = useState([]);
-  const [showNotifications, setShowNotifications] = useState(false);
-  const { user, token, authFetch } = useAuth();
+  const { user, token } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -30,49 +27,6 @@ export default function Dashboard() {
       navigate("/auth");
     }
   }, [user, token, navigate, location.pathname]);
-
-  // Handle navigation from referral popup — land on the correct tab
-  useEffect(() => {
-    if (location.state?.tab) {
-      setActiveTab(location.state.tab);
-      // Clear the state so a page refresh doesn't re-trigger it
-      navigate(location.pathname, { replace: true, state: {} });
-    }
-  }, [location.state, navigate, location.pathname]);
-
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      if (!token) return;
-      try {
-        const res = await authFetch(`${API_BASE_URL}/api/user/notifications`);
-        if (res.ok) {
-          const data = await res.json();
-          setNotifications(data.notifications || []);
-        }
-      } catch (err) {
-        console.error("Failed to fetch notifications", err);
-      }
-    };
-    fetchNotifications();
-  }, [token, authFetch]);
-
-  const handleBellClick = async () => {
-    setShowNotifications(!showNotifications);
-    const hasUnread = notifications.some((n) => !n.is_read);
-    
-    if (!showNotifications && hasUnread) {
-      // Mark as read in UI immediately
-      setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
-      // Call backend
-      try {
-        await authFetch(`${API_BASE_URL}/api/user/notifications/read`, {
-          method: "POST"
-        });
-      } catch (err) {
-        console.error("Failed to mark notifications read", err);
-      }
-    }
-  };
 
   if (!user && !token && location.pathname === "/dashboard") return null;
 
@@ -103,56 +57,9 @@ export default function Dashboard() {
           </div>
           <span className="font-semibold text-[#127733] text-sm">LaundryAid</span> */}
           <span className="font-semibold text-[#127733] text-sm">Dashboard</span> 
-        </div>
         
-        <div className="flex items-center gap-3 relative">
-          <button 
-            onClick={handleBellClick}
-            className="relative p-1 text-gray-400 hover:text-[#127733] transition-colors"
-          >
-            <Bell size={20} />
-            {notifications.some(n => !n.is_read) && (
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
-            )}
-          </button>
-
-          {/* Notifications Dropdown */}
-          {showNotifications && (
-            <div className="absolute top-full right-0 mt-2 w-72 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden">
-              <div className="p-3 border-b border-gray-50 bg-gray-50">
-                <h3 className="font-semibold text-sm text-[#03170a]">Notifications</h3>
-              </div>
-              <div className="max-h-80 overflow-y-auto">
-                {notifications.length === 0 ? (
-                  <div className="p-6 text-center text-gray-400 text-xs">
-                    No notifications yet
-                  </div>
-                ) : (
-                  notifications.map((notif) => (
-                    <div key={notif.id} className="p-3 border-b border-gray-50 hover:bg-gray-50 transition-colors">
-                      <p className="font-medium text-xs text-[#03170a]">{notif.title}</p>
-                      <p className="text-[11px] text-gray-500 mt-0.5 line-clamp-2">{notif.message}</p>
-                      <p className="text-[9px] text-gray-400 mt-1">
-                        {new Date(notif.created_at).toLocaleDateString()}
-                      </p>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          )}
-          
-          <button 
-            onClick={() => setActiveTab("profile")} 
-            className="w-8 h-8 rounded-full border-2 border-[#127733] overflow-hidden bg-gray-100 shadow-sm transition-transform hover:scale-105"
-          >
-            <img 
-              src={`https://api.dicebear.com/9.x/notionists/svg?seed=${user?.email || 'guest'}`} 
-              alt="Profile" 
-              className="w-full h-full object-cover"
-            />
-          </button>
         </div>
+        <span className="text-xs text-gray-400 capitalize">{activeTab}</span>
       </header>
 
       {/* Content */}

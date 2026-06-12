@@ -1,19 +1,12 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-} */
-
-
 .react-datepicker-wrapper, .react-datepicker_input-container input {
   width: 100% !important;
 }
 
 .react-datepicker__day--selected {
-  background-color: #127733 !important;  /* your brand color */
+  background-color: #127733 !important;
   color: white;
 }
 
@@ -22,6 +15,10 @@
   color: white;
 }
 
+/* Safe area for mobile bottom nav */
+.safe-area-pb {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
 
 @custom-variant dark (&:is(.dark *));
 

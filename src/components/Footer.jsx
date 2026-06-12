@@ -64,13 +64,17 @@ export default function Footer() {
               {" "}
               <Link to={"/request"}>Deluxe</Link>
             </li>
+            <li>
+              {" "}
+              <Link to={"/become-a-vendor"}>Become a Vendor</Link>
+            </li>
           </ul>
         </div>
 
         {/* Contact Info */}
         <div>
           <h4 className='font-semibold mb-3 text-[#c85f0b]'>Contact Us</h4>
-          <p className='text-sm text-gray-300'>123 Oluyole, Ibadan, Nigeria</p>
+          <p className='text-sm text-gray-300'>No 1, St Mary Street off Alaafin Avenue, Oluyole behind Bovas Petrol Station, Ibadan, Oyo</p>
           <p className='text-sm text-gray-300 mt-1'>
             Email: info@laundryaid.com.ng
           </p>

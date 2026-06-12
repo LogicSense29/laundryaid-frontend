@@ -4,49 +4,99 @@ import { Check } from "lucide-react";
 
 function Pricing() {
   const packages = [
+    // {
+    //   type: "Wash & Fold",
+    //   description:
+    //     "Perfect for your everyday laundry needs. We wash, remove stains, and fold your clothes neatly, saving you time and effort.",
+    //   benefits: [
+    //     "Wash & Fold",
+    //     "Stain Removal",
+    //     "Ironing",
+    //     "Starching",
+    //     "Free pick up & delivery",
+    //     "72hr clothe return",
+    //   ],
+    //   amount: "₦8,000",
+    // },
     {
-      type: "Wash & Fold",
-      description:
-        "Perfect for your everyday laundry needs. We wash, remove stains, and fold your clothes neatly, saving you time and effort.",
-      benefits: [
-        "Washing",
-        "Stain Removal",
-        "Fold",
-        "Free pick up & delivery",
-        "72hr clothe return",
-      ],
-      amount: "₦6,000",
-    },
-    {
-      type: "Premium",
+      type: "Basic",
+      category: "pay-as-you-go",
       description:
         "Ideal for delicate or high-value clothing. Includes deep cleaning, ironing, starching, and professional garment treatment.",
       benefits: [
-        "Washing",
+        "Wash and Fold (Up to 80 Clothes)",
+        "Stain Removal",
+        "Ironing",
+        "Free pick up & delivery",
+        "72hr clothe return",
+      ],
+      amount: "₦12,000",
+    },
+        {
+      type: "Premium",
+      category: "subscription",
+      description:
+        "Ideal for delicate or high-value clothing. Includes deep cleaning, ironing, starching, and professional garment treatment.",
+      benefits: [
+        "Wash and Fold (4 times in a month)",
         "Stain Removal",
         "Ironing",
         "Starching",
         "Clothe Treatment",
-        "Dry Cleaning",
         "Free pick up & delivery",
         "72hr clothe return",
       ],
-      amount: "₦25,000",
+      amount: "₦35,000",
     },
     {
-      type: "Deluxe",
+      type: "Ironing",
+      category: "pay-as-you-go",
       description:
-        "A great choice for a polished look. Enjoy clean, crisp, and fresh-smelling clothes with washing, ironing, stain removal, and starching all in one package.",
+        "Perfect Ironing for your everyday laundry needs. We iron, we starch, and fold your clothes neatly, saving you time and effort.",
       benefits: [
-        "Washing",
-        "Stain Removal",
-        "Ironing",
+        // "Washing",
+        // "Stain Removal",
+        "Ironing (Up to 40 Clothes)",
+        "Folding",
         "Starching",
         "Free pick up & delivery",
         "72hr clothe return",
       ],
       amount: "₦10,000",
+      // amountAlt: "₦20,000",
+      // countLimit: "Up to 80 clothes",
+      // countLimitAlt: "More than 80 clothes",
     },
+    // {
+    //   type: "Premium",
+    //   description:
+    //     "Ideal for delicate or high-value clothing. Includes deep cleaning, ironing, starching, and professional garment treatment.",
+    //   benefits: [
+    //     "Washing",
+    //     "Stain Removal",
+    //     "Ironing",
+    //     "Starching",
+    //     "Clothe Treatment",
+    //     "Dry Cleaning",
+    //     "Free pick up & delivery",
+    //     "72hr clothe return",
+    //   ],
+    //   amount: "₦25,000",
+    // },
+    // {
+    //   type: "Deluxe",
+    //   description:
+    //     "A great choice for a polished look. Enjoy clean, crisp, and fresh-smelling clothes with washing, ironing, stain removal, and starching all in one package.",
+    //   benefits: [
+    //     "Washing",
+    //     "Stain Removal",
+    //     "Ironing",
+    //     "Starching",
+    //     "Free pick up & delivery",
+    //     "72hr clothe return",
+    //   ],
+    //   amount: "₦10,000",
+    // },
   ];
 
   return (
@@ -73,11 +123,22 @@ function Pricing() {
             </div>
 
             {/* Price */}
-            <div className='mt-6 text-2xl font-semibold text-[#127733]'>
-              {item.amount}
-              <span className='text-sm font-normal text-gray-400'>
-                /month
-              </span>
+            <div className='mt-6'>
+              <div className='text-2xl font-semibold text-[#127733]'>
+                {item.amount}
+                <span className='text-sm font-normal text-gray-400'>
+                  {/* {item.countLimit ? ` (${item.countLimit})` : "/month"} */}
+                   {index !== 1 ? ` (${item.category})` : "/month"}
+                </span>
+              </div>
+              {item.amountAlt && (
+                <div className='text-2xl font-semibold text-[#127733] mt-1'>
+                  {item.amountAlt}
+                  <span className='text-sm font-normal text-gray-400'>
+                    {item.countLimitAlt ? ` (${item.countLimitAlt})` : "/month"}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Benefits */}
@@ -85,7 +146,8 @@ function Pricing() {
               {item.benefits.map((benefit, i) => (
                 <li key={i} className='flex items-center gap-2'>
                   <Check size={16} className='text-green-600' />
-                  {i == 0 ? `${benefit} (Up to 80 clothes)` : benefit}
+                  {/* {i == 0 ? `${benefit} (Up to 60 clothes)` : benefit} */}
+                  {benefit}
                 </li>
               ))}
             </ul>

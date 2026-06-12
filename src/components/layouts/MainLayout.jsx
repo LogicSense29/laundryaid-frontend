@@ -40,18 +40,19 @@ function MainLayout() {
             <main className='pt-20'>
               <Outlet />
             </main>
+               <Footer />
           </div>
         ) : (
           <div className='flex-1 bg-[#e7f1ea]'>
             <Navbar scrolled={scrolled} />
             <div ref={triggerRef} className='h-1 w-full pointer-events-none' />
-            <main className='pt-20 px-4 sm:px-8'>
+            <main className='pt-20 px-4 sm:px-8 md:px-40 lg:px-60'>
               <Outlet />
             </main>
           </div>
         )}
 
-        <Footer />
+     
         {/* {scrolled && <DiscountButton />} */}
       </div>
     </>

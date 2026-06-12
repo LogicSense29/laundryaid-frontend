@@ -8,18 +8,23 @@ import {
   Instagram,
   Facebook,
   MessageCircle,
+  LogIn,
+  LayoutDashboard
 } from "lucide-react";
 import { motion } from "motion/react";
 import Logo from "../assets/laundryaid-logo.svg";
+import { useAuth } from "@/context/AuthContext";
 
 const Navbar = ({ scrolled }) => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { token } = useAuth();
 
   const navLinks = [
     { name: "Home", path: "/", icon: MapPinHouse },
-    // { name: "Contact", path: "/contact", icon: UserRoundPen },
-    // { name: "Dashboard", path: "/dashboard" }, // Optional: render conditionally if logged in
+    ...(token 
+      ? [{ name: "Dashboard", path: "/dashboard", icon: LayoutDashboard }]
+      : [{ name: "Login", path: "/auth", icon: LogIn }])
   ];
 
   const isActive = (path) => location.pathname === path;

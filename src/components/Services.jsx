@@ -14,10 +14,10 @@ const services = [
       "Your laundry gets our full attention. We wash and care for your clothes like they’re our own.",
   },
   {
-    image: "/dry-cleaning-laundryaid.jpg",
-    title: "We Dry Clean",
+    image: "/we-iron.png",
+    title: "We Iron",
     description:
-      "Expert dry cleaning for your delicate and special garments, handled with care.",
+      "Expert Ironing for your already washed clothes, handled with care.",
   },
 ];
 
